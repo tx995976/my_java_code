@@ -1,7 +1,7 @@
+package cal;
+import java.util.Scanner;
+import java.util.Stack;
 
-public interface operation{
-    public double cal(double value_l,double value_r);
-}
 
 class operater_plus implements operation{
     public double cal(double value_l,double value_r){
@@ -26,11 +26,22 @@ class operater_multiply implements operation{
 
 class operater_division implements operation{
     public double cal(double value_l,double value_r){
+         
         double temp = value_l / value_r;
         return temp;
     }
 }
 
 public class ex2{
-    
+    public static void main(String[] args) {
+        
+        Scanner scan = new Scanner(System.in);
+        if(scan.hasNext()){
+            Double i = scan.nextDouble();
+            System.out.println(i);
+        }
+        scan.close();        
+    }
+
+
 }
