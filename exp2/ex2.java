@@ -64,9 +64,7 @@ public class ex2{
 
     }
 
-    public void math_str_change(){
-        System.out.println("input(= is EOF):");
-        Scanner scan = new Scanner(System.in);
+    public void math_str_change(String input){
         //运算符优先表
         HashMap<Character,Integer> upper_punct = new HashMap<Character,Integer>();
         upper_punct.put('(', 0);
@@ -78,7 +76,7 @@ public class ex2{
         //////
         char temp_char;
         Stack<Character> punct_stack = new Stack<Character>();
-        StringBuilder math_str = scan.toString();
+        StringBuilder math_str = new StringBuilder(input);
         StringBuilder math_str_back =new StringBuilder();
         
         Pattern nums_P =Pattern.compile("^((\\d+)(\\.\\d+)?)");
@@ -126,7 +124,6 @@ public class ex2{
                             punct_stack.push(temp_char);
                         }
                         else{
-                            math_str.deleteCharAt(0);
                             while(!punct_stack.empty() && upper_punct.get(punct_stack.peek()).intValue() >= upper_punct.get(temp_char).intValue()){
                                 math_str_back.append(punct_stack.pop().toString()+" ");
                             }
@@ -140,11 +137,18 @@ public class ex2{
         while(!punct_stack.empty()){
             math_str_back.append(punct_stack.pop().toString()+" ");
         }
+        System.out.println(math_str_back);
     }
 
     public static void main(String[] args) {
+            ex2 test = new ex2();
+            System.out.println("input(\"=\" is EOF):");
+            String str_in = new String();
+            Scanner scan = new Scanner(System.in);
+            if(scan.hasNext())
+                str_in = scan.next();
+            test.math_str_change(str_in);
             
     }
-
 
 }
