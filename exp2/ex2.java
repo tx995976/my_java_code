@@ -6,13 +6,12 @@ import java.util.regex.Pattern;
 
 abstract class operation{
     protected double value_l,value_r,result;
-    protected Character operater;
     public operation(double value_l_i,double value_r_i){
         this.value_l = value_l_i;
         this.value_r = value_r_i;
     }
     public double get_result(){
-        return result;
+        return this.result;
     }
 }
 
@@ -20,9 +19,9 @@ class operater_plus extends operation{
     public operater_plus(double value_l_i,double value_r_i){
         super(value_l_i, value_r_i);
     }
-    public double get_result(double value_l,double value_r){
-        double temp = value_l+value_r;
-        return temp;
+    public double get_result(){
+        this.result = this.value_l + this.value_r;
+        return this.result;
     }
 }
 
@@ -30,9 +29,9 @@ class operater_minus extends operation{
     public operater_minus(double value_l_i,double value_r_i){
         super(value_l_i, value_r_i);
     }
-    public double get_result(double value_l,double value_r){
-        double temp = value_l - value_r;
-        return temp;
+    public double get_result(){
+        this.result = this.value_l - this.value_r;
+        return this.result;
     }
 }
 
@@ -40,9 +39,9 @@ class operater_multiply extends operation{
     public operater_multiply(double value_l_i,double value_r_i){
         super(value_l_i, value_r_i);
     }
-    public double get_result(double value_l,double value_r){
-        double temp = value_l * value_r;
-        return temp;
+    public double get_result(){
+        this.result = this.value_l * this.value_r;
+        return this.result;
     }
 }
 
@@ -50,18 +49,56 @@ class operater_division extends operation{
     public operater_division(double value_l_i,double value_r_i){
         super(value_l_i, value_r_i);
     }
-    public double get_result(double value_l,double value_r){
-         
-        double temp = value_l / value_r;
-        return temp;
+    public double get_result(){
+        this.result = this.value_l / this.value_r;
+        return this.result;
     }
 }
 
 public class ex2{
 
     public void math_str_get_result(StringBuilder math_changed){
+        Stack<Double> num_Stack = new Stack<Double>();
+        Scanner math_str_input = new Scanner(math_changed.toString());
 
+        Character punct_in;
+        double value_l,value_r,final_result;
 
+        while(math_str_input.hasNext()){
+            if(math_str_input.hasNextDouble()){
+                num_Stack.push(math_str_input.nextDouble());
+            }
+            else{
+                punct_in = math_str_input.next().charAt(0);
+                value_r = num_Stack.pop().doubleValue();
+                value_l = num_Stack.pop().doubleValue();
+
+                switch(punct_in){
+                    case '+':{
+                        operation num_calculate = new operater_plus(value_l, value_r);
+                        num_Stack.push(num_calculate.get_result());
+                        break;
+                    }
+                    case '-':{
+                        operation num_calculate = new operater_minus(value_l, value_r);
+                        num_Stack.push(num_calculate.get_result());
+                        break;
+                    }
+                    case '*':{
+                        operation num_calculate = new operater_multiply(value_l, value_r);
+                        num_Stack.push(num_calculate.get_result());
+                        break;
+                    }
+                    case '/':{
+                        operation num_calculate = new operater_division(value_l, value_r);
+                        num_Stack.push(num_calculate.get_result());
+                        break;
+                    }
+                }
+            }
+        }
+        final_result = num_Stack.pop();
+        System.out.println("result is :"+final_result);
     }
 
     public void math_str_change(String input){
@@ -137,7 +174,7 @@ public class ex2{
         while(!punct_stack.empty()){
             math_str_back.append(punct_stack.pop().toString()+" ");
         }
-        System.out.println(math_str_back);
+        this.math_str_get_result(math_str_back);
     }
 
     public static void main(String[] args) {
@@ -148,7 +185,7 @@ public class ex2{
             if(scan.hasNext())
                 str_in = scan.next();
             test.math_str_change(str_in);
-            
+            scan.close();
     }
 
 }
