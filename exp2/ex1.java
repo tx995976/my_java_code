@@ -1,4 +1,4 @@
-package exp2;
+package exp2_ex1;
 import java.util.Scanner;
 
 class Rectangle implements Geometricinterface{
