@@ -55,6 +55,20 @@ class operater_division extends operation{
     }
 }
 
+class TestCalc{
+    public void test(){
+        ex2 test = new ex2();
+        System.out.println("input(\"=\" is EOF):");
+        String str_in = new String();
+        Scanner scan = new Scanner(System.in);
+        if(scan.hasNext())
+            str_in = scan.next();
+        test.math_str_change(str_in);
+        scan.close();
+    }
+
+}
+
 public class ex2{
 
     public void math_str_get_result(StringBuilder math_changed){
@@ -176,16 +190,9 @@ public class ex2{
         }
         this.math_str_get_result(math_str_back);
     }
-
     public static void main(String[] args) {
-            ex2 test = new ex2();
-            System.out.println("input(\"=\" is EOF):");
-            String str_in = new String();
-            Scanner scan = new Scanner(System.in);
-            if(scan.hasNext())
-                str_in = scan.next();
-            test.math_str_change(str_in);
-            scan.close();
+           TestCalc test_node = new TestCalc();
+           test_node.test();
     }
 
 }
