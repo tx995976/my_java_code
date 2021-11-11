@@ -1,8 +1,11 @@
 ﻿package com.qst.dms.service;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
@@ -35,9 +38,12 @@ public class LogRecService {
 			// 接收键盘输入的字符串信息
 			String user = scanner.next();
 			// 提示用户输入主机IP
-			System.out.println("请输入ip地址：");
+			//System.out.println("请输入ip地址：");
 			// 接收键盘输入的字符串信息
-			String ip = scanner.next();
+            //string ip = scanner.next();
+			InetAddress getip;
+            getip = InetAddress.getLocalHost();
+            String ip = getip.getHostAddress();
 			// 提示用户输入登录状态、登出状态
 			System.out.println("请输入登录状态:1是登录，0是登出");
 			int logType = scanner.nextInt();
@@ -77,4 +83,20 @@ public class LogRecService {
 		}
 	}
 
+    public boolean SaveMacthLog(){
+        OutputStream Log = new FileOutputStream("./data/MatchLog.txt");
+        
+    }
+
+    public boolean ReadMatchLog(){
+
+    }
+    
+    public boolean SaveMacthTransport(){
+
+    }
+
+    public boolean ReadMatchTransport(){
+
+    }
 }
