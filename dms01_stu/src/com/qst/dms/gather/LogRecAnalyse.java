@@ -28,23 +28,43 @@ public class LogRecAnalyse extends DataFilter implements IDataAnalyse {
 		ArrayList<LogRec> logs = (ArrayList<LogRec>) this.getDatas();
 
 		// 遍历，对日志数据进行过滤，根据日志登录状态分别放在不同的数组中
-		
+		for(LogRec rec : logs){
+            if(rec.getLogType() == rec.LOG_IN)
+                logIns.add(rec);
+            if(rec.getLogType() == rec.LOG_OUT)
+                logOuts.add(rec);
+        }
 				// 添加到“登录”日志集合中
-		
 				// 添加到“登出”日志集合中
-				
 	}
 	// 实现IDataAnalyse接口中数据分析方法
 	public ArrayList<MatchedLogRec> matchData() {
 		// 创建日志匹配集合
 		ArrayList<MatchedLogRec> matchLogs = new ArrayList<>();
-
+        for(LogRec login : logIns){
+            for(LogRec logout : logOuts){
+                if((login.getUser().equals(logout.getUser())) 
+                    && (login.getIp().equals(logout.getIp())) ){
+                        login.setType(DataBase.MATHCH);
+                        logout.setType(DataBase.MATHCH);
+                        
+                        matchLogs.add(new MatchedLogRec(login,logout));
+                    }
+            }
+        }
 		// 数据匹配分析
-		
+		try{
+            if(matchLogs.size() == 0){
+                throw new DataAnalyseException("没有合适的数据!");
+            }
+        }catch(DataAnalyseException e){
+                e.printStackTrace();
+            }
+            return matchLogs;
+        
 		//try 
 				// 没找到匹配的数据,抛出DataAnalyseException异常
 		//catch (DataAnalyseException e) {
 			//e.printStackTrace();
-		return matchLogs;
 	}
 }
