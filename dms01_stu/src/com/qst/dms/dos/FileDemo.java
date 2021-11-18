@@ -28,9 +28,9 @@ public class FileDemo {
 		//保存匹配的日志信息到文件中
 		logService.SaveMacthLog(matchLogs);
 		//保存匹配的日志信息到数据库中
-		logService.SaveMacthLogToDB(matchLogs);
+		//logService.SaveMacthLogToDB(matchLogs);
 		//从文件中读取匹配的日志信息
-		ArrayList<MatchedLogRec> list1 = logService.readMatchLog();
+		ArrayList<MatchedLogRec> list1 = logService.ReadMatchLog();
 		logService.showMatchLog(list1);
 		
 		// 创建一个物流业务类
@@ -47,7 +47,7 @@ public class FileDemo {
 		//保存匹配的物流信息到文件中
 		tranService.saveMatchedTransport(matchTrans);
 		//保存匹配的物流信息到数据库中
-		tranService.saveMatchTransportToDB(matchTrans);
+		//tranService.saveMatchTransportToDB(matchTrans);
 		//从文件中读取匹配的物流信息
 		ArrayList<MatchedTransport> list2 = tranService.readMatchedTransport();
 		tranService.showMatchTransport(list2);

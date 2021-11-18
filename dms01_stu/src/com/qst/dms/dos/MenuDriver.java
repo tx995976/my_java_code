@@ -30,17 +30,23 @@ public class MenuDriver {
 
 		// 日志数据匹配集合
 		ArrayList<MatchedLogRec> matchedLogs = null;
-		ArrayList<MatchedLogRec> matchedLogs_old = null;
+		ArrayList<MatchedLogRec> matchedLogs_old = new ArrayList<>();
 		// 物流数据匹配集合
 		ArrayList<MatchedTransport> matchedTrans = null;
-		ArrayList<MatchedTransport> matchedTran_old = null;
-		
+		ArrayList<MatchedTransport> matchedTrans_old = new ArrayList<>();
+
+
+		System.out.println("尝试读取文件....");
 		try{
-			System.out.println("尝试读取文件....");
 			matchedLogs_old = new ArrayList<MatchedLogRec>(logService.ReadMatchLog());
-			matchedTran_old = new ArrayList<MatchedTransport>(tranService.readMatchedTransport());
 		}catch(Exception e){
-			System.out.println("没有成功读取文件,使用记录将会新建文件");
+			System.out.println("没有成功读取日志,使用记录以新建文件");
+		}
+
+		try{
+			matchedTrans_old = new ArrayList<MatchedTransport>(tranService.readMatchedTransport());
+		}catch(Exception e){
+			System.out.println("没有成功读取物流,使用记录以新建文件");
 		}
 
 		try {
@@ -86,11 +92,7 @@ public class MenuDriver {
 						logAn.doFilter();
 						// 日志数据分析
                         // "should_add_in_end"
-						ArrayList<MatchedLogRec> t_list = new ArrayList<MatchedLogRec>(logAn.matchData());
-                        matchedLogs.addAll(t_list);
-                        HashSet<MatchedLogRec> temp_set = new HashSet<>(matchedLogs);
-                        matchedLogs.clear();
-                        matchedLogs.addAll(temp_set);
+						matchedLogs = logAn.matchData();
                         System.out.println("日志数据过滤匹配完成！");
 
 					} else if (type == 2) {
@@ -101,35 +103,45 @@ public class MenuDriver {
 						// 物流数据过滤
 						transAn.doFilter();
 						// 物流数据分析
-						ArrayList<MatchedTransport> t_list = new ArrayList<>(matchedTrans);
-                        t_list.retainAll(transAn.matchData());
-                        matchedTrans.removeAll(t_list);
-                        matchedTrans.addAll(transAn.matchData());
-
+						matchedTrans = transAn.matchData();
 						System.out.println("物流数据过滤匹配完成！");
 					}
 				}
 					break;
 				case 3:
-					System.out.println("数据记录 中...");
-                        logService.SaveMacthLog(matchedLogs);
-                        tranService.saveMatchedTransport(matchedTrans);
+					System.out.println("数据记录中...");
+						ArrayList<MatchedLogRec> logs_buffer = new ArrayList<>(matchedLogs_old);
+						ArrayList<MatchedTransport> trans_buffer = new ArrayList<>(matchedTrans_old);
+						/////////////////////
+						if(matchedLogs != null)
+							logs_buffer.addAll(matchedLogs);
+						if(matchedTrans != null)
+							trans_buffer.addAll(matchedTrans);
+						/////////////////////
+						logService.SaveMacthLog(logs_buffer);
+                        tranService.saveMatchedTransport(trans_buffer);
 					System.out.println("写入完成");
 					break;
 				case 4: {
 					System.out.println("显示匹配的数据：");
-					if (matchedLogs == null || matchedLogs.size() == 0){
-						System.out.println("匹配的日志记录是0条！");
-					} else {
 						//输出匹配的日志信息
-                        logService.showMatchLog(matchedLogs);
-					}
-					if (matchedTrans == null || matchedTrans.size() == 0){
-						System.out.println("匹配的物流记录是0条！");
-					} else {
+						if(!matchedLogs_old.isEmpty())
+						logService.showMatchLog(matchedLogs_old);
+						if(matchedLogs != null && !matchedLogs.isEmpty())
+						logService.showMatchLog(matchedLogs);
+
+						if ((matchedLogs == null || matchedLogs.size() == 0) && (matchedLogs_old.isEmpty())){
+							System.out.println("匹配的物流记录是0条！");
+						} 
+						System.out.println("------------------------");
 						// 输出匹配的物流信息
-                        tranService.showMatchTransport(matchedTrans);
-					}
+						if(!matchedTrans_old.isEmpty())
+							tranService.showMatchTransport(matchedTrans_old);
+						if(matchedTrans != null && !matchedTrans.isEmpty())
+                        	tranService.showMatchTransport(matchedTrans);
+						if ((matchedTrans == null || matchedTrans.size() == 0) && (matchedTrans_old.isEmpty())){
+							System.out.println("匹配的物流记录是0条！");
+						} 
 				}
 					break;
 				case 5:
