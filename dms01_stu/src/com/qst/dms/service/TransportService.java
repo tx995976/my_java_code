@@ -88,7 +88,7 @@ public class TransportService {
 		// 创建一个ObjectOutputStream对象输出流，并连接文件输出流
 		// 以可追加的方式创建文件输出流，数据保存到MatchedTransports.txt文件中
 		try (ObjectOutputStream obs = new ObjectOutputStream(
-				new FileOutputStream("MatchedTransports.txt", true))) {
+				new FileOutputStream("MatchedTransports.txt"))) {
 			// 循环保存对象数据
 			for (MatchedTransport e : matchTrans) {
 				if (e != null) {

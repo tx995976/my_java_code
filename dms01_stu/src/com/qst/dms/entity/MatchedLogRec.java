@@ -3,6 +3,7 @@ package com.qst.dms.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 //匹配日志记录，"登录登出对" 类型
 
@@ -59,5 +60,9 @@ public class MatchedLogRec implements Serializable {
 	public String toString() {
 		return login.toString() + " | " + logout.toString();
 	}
+
+    public int hashCode(){
+        return Objects.hash(login,logout);
+    }
 
 }
