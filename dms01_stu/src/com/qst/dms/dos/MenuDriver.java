@@ -29,15 +29,24 @@ public class MenuDriver {
 		TransportService tranService = new TransportService();
 
 		// 日志数据匹配集合
-		ArrayList<MatchedLogRec> matchedLogs = logService.ReadMatchLog();
+		ArrayList<MatchedLogRec> matchedLogs = null;
+		ArrayList<MatchedLogRec> matchedLogs_old = null;
 		// 物流数据匹配集合
-		ArrayList<MatchedTransport> matchedTrans = tranService.readMatchedTransport();
+		ArrayList<MatchedTransport> matchedTrans = null;
+		ArrayList<MatchedTransport> matchedTran_old = null;
+		
+		try{
+			System.out.println("尝试读取文件....");
+			matchedLogs_old = new ArrayList<MatchedLogRec>(logService.ReadMatchLog());
+			matchedTran_old = new ArrayList<MatchedTransport>(tranService.readMatchedTransport());
+		}catch(Exception e){
+			System.out.println("没有成功读取文件,使用记录将会新建文件");
+		}
+
 		try {
 			while (true) {
 				// 输出菜单界面，需补充 
 				System.out.println("1.数据采集    2.数据匹配\n3.数据记录    4.数据显示\n5.数据发送    0.退出应用");
-            
-
 				// 提示用户输入要操作的菜单项
 				System.out.println("请输入菜单项（0~5）：");
                 
@@ -105,6 +114,7 @@ public class MenuDriver {
 					System.out.println("数据记录 中...");
                         logService.SaveMacthLog(matchedLogs);
                         tranService.saveMatchedTransport(matchedTrans);
+					System.out.println("写入完成");
 					break;
 				case 4: {
 					System.out.println("显示匹配的数据：");

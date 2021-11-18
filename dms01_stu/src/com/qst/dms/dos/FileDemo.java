@@ -28,7 +28,7 @@ public class FileDemo {
 		//保存匹配的日志信息到文件中
 		logService.SaveMacthLog(matchLogs);
 		//保存匹配的日志信息到数据库中
-		logService.(matchLogs);
+		logService.SaveMacthLogToDB(matchLogs);
 		//从文件中读取匹配的日志信息
 		ArrayList<MatchedLogRec> list1 = logService.readMatchLog();
 		logService.showMatchLog(list1);

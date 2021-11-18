@@ -60,9 +60,4 @@ public class MatchedLogRec implements Serializable {
 	public String toString() {
 		return login.toString() + " | " + logout.toString();
 	}
-
-    public int hashCode(){
-        return Objects.hash(login,logout);
-    }
-
 }
