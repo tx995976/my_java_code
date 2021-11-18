@@ -1,10 +1,16 @@
 ﻿package com.qst.dms.service;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Date;
@@ -83,20 +89,43 @@ public class LogRecService {
 		}
 	}
 
-    public boolean SaveMacthLog(){
-        OutputStream Log = new FileOutputStream("./data/MatchLog.txt");
-        
+    public void SaveMacthLog(ArrayList<LogRec> Logs){
+        try{
+            FileWriter Log_W = new FileWriter("../data/MatchLog.txt");
+            BufferedWriter writer = new BufferedWriter(Log_W);
+            for(LogRec s_log : Logs){
+                writer.write(s_log.toString()+'\n');
+                writer.flush();
+            }
+            writer.close();
+            Log_W.close();
+        }
+        catch(Exception e){
+            System.out.println(e.toString());
+        }
     }
 
-    public boolean ReadMatchLog(){
-
+    public void ReadMatchLog(ArrayList<LogRec> Logs){
+        try{
+            FileReader Log_R = new FileReader("../data/MatchLog.txt") ;
+            BufferedReader reader = new BufferedReader(Log_R);
+            while(reader.ready()){
+                Scanner inputer = new Scanner(reader.readLine()).useDelimiter(",");
+                //"Date input_no_solute"
+                LogRec log_temp = new LogRec(inputer.nextInt(),,inputer.next(),inputer.nextInt(),inputer.next(),inputer.next(),inputer.nextInt());
+                Logs.add(log_temp);
+            }
+        }
+        catch(Exception e){
+            System.out.println(e.toString());
+        }
     }
     
-    public boolean SaveMacthTransport(){
+    public void SaveMacthTransport(){
 
     }
 
-    public boolean ReadMatchTransport(){
+    public void ReadMatchTransport(){
 
     }
 }
