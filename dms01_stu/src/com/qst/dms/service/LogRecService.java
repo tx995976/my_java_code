@@ -89,43 +89,34 @@ public class LogRecService {
 		}
 	}
 
-    public void SaveMacthLog(ArrayList<LogRec> Logs){
+    public void SaveMacthLog(ArrayList<MatchedLogRec> Logs){
         try{
-            FileWriter Log_W = new FileWriter("../data/MatchLog.txt");
-            BufferedWriter writer = new BufferedWriter(Log_W);
-            for(LogRec s_log : Logs){
-                writer.write(s_log.toString()+'\n');
-                writer.flush();
-            }
-            writer.close();
-            Log_W.close();
-        }
-        catch(Exception e){
-            System.out.println(e.toString());
+			ObjectOutputStream Log_writer = new ObjectOutputStream(new FileOutputStream("MatchedLogRec.txt"));
+			for (MatchedLogRec this_log : Logs) {
+				if (this_log != null) {
+					Log_writer.writeObject(this_log);
+					Log_writer.flush();
+				}
+			}
+			Log_writer.writeObject(null);
+			Log_writer.flush();
+        }catch(Exception e){
+           e.printStackTrace();
         }
     }
 
-    public void ReadMatchLog(ArrayList<LogRec> Logs){
+    public ArrayList<MatchedLogRec> ReadMatchLog(){
+		ArrayList<MatchedLogRec> matchLogs = new ArrayList<>();
         try{
-            FileReader Log_R = new FileReader("../data/MatchLog.txt") ;
-            BufferedReader reader = new BufferedReader(Log_R);
-            while(reader.ready()){
-                Scanner inputer = new Scanner(reader.readLine()).useDelimiter(",");
-                //"Date input_no_solute"
-                LogRec log_temp = new LogRec(inputer.nextInt(),,inputer.next(),inputer.nextInt(),inputer.next(),inputer.next(),inputer.nextInt());
-                Logs.add(log_temp);
-            }
-        }
+			ObjectInputStream Log_reader = new ObjectInputStream(new FileInputStream("MatchedLogRec.txt")) ;
+				MatchedLogRec matchLog_temp;
+				while ((matchLog_temp = (MatchedLogRec) Log_reader.readObject()) != null) {
+					matchLogs.add(matchLog_temp);
+				}
+			} 
         catch(Exception e){
-            System.out.println(e.toString());
+            e.printStackTrace();
         }
-    }
-    
-    public void SaveMacthTransport(){
-
-    }
-
-    public void ReadMatchTransport(){
-
+		return matchLogs;
     }
 }
