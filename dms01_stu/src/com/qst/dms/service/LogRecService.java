@@ -119,4 +119,13 @@ public class LogRecService {
         }
 		return matchLogs;
     }
+
+    public ArrayList<MatchedLogRec> ReadMatchLogFromDB(){
+
+    }
+
+    public void SaveMacthLogToDB(){
+        
+
+    } 
 }
