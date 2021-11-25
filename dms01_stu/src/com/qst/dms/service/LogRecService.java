@@ -1,11 +1,13 @@
 ﻿package com.qst.dms.service;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -109,14 +111,16 @@ public class LogRecService {
 		ArrayList<MatchedLogRec> matchLogs = new ArrayList<>();
         try{
 			ObjectInputStream Log_reader = new ObjectInputStream(new FileInputStream("MatchedLogRec.txt")) ;
-				MatchedLogRec matchLog_temp;
-				while ((matchLog_temp = (MatchedLogRec) Log_reader.readObject()) != null) {
-					matchLogs.add(matchLog_temp);
+			MatchedLogRec matchLog_temp;
+			while ((matchLog_temp = (MatchedLogRec) Log_reader.readObject()) != null) {
+				matchLogs.add(matchLog_temp);
 				}
-			} 
-        catch(Exception e){
-            e.printStackTrace();
-        }
+			}
+        	catch(Exception ex){
+				System.out.println("未成功读入日志");
+        	}
 		return matchLogs;
     }
+
+	public void
 }

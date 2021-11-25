@@ -118,7 +118,7 @@ public class TransportService {
 				matchTrans.add(matchTran);
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			System.out.println("未成功读入物流信息");
 		}
 		return matchTrans;
 	}
