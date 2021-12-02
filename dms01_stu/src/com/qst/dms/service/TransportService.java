@@ -4,10 +4,14 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.security.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
+import java.sql.*;
 
+import com.qst.dms.db.DBUtil;
+import com.qst.dms.dos.DBDemo;
 import com.qst.dms.entity.DataBase;
 import com.qst.dms.entity.MatchedLogRec;
 import com.qst.dms.entity.MatchedTransport;
@@ -123,5 +127,96 @@ public class TransportService {
 		return matchTrans;
 	}
 
-	
+	public void saveMatchTransportToDB(ArrayList<MatchedTransport> matchTrans){
+		DBUtil db = new DBUtil();
+		try{
+			db.getConnection();
+			for(MatchedTransport match : matchTrans){
+				Transport send = match.getSend();
+				Transport trans = match.getTrans();
+				Transport receive = match.getReceive();
+				// INSERT ?
+				String sql = "INSERT INTO gather_transport(id,time,address,type,handler,reciver,transporttype) VALUES(?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE id = id";
+				Object [] ob_socket = new Object [] {
+					send.getId(),
+					new java.sql.Timestamp(send.getTime().getTime()),
+					send.getAddress(),
+					send.getType(),
+					send.getHandler(),
+					send.getReciver(),
+					send.getTransportType()
+				};
+				db.executeUpdate(sql, ob_socket);
+
+				ob_socket = new Object []{
+					trans.getId(),
+					new java.sql.Timestamp(trans.getTime().getTime()),
+					trans.getAddress(),
+					trans.getType(),
+					trans.getHandler(),
+					trans.getReciver(),
+					trans.getTransportType()
+				};
+				db.executeUpdate(sql, ob_socket);
+
+				ob_socket = new Object[]{
+					receive.getId(),
+					new java.sql.Timestamp(receive.getTime().getTime()),
+					receive.getAddress(),
+					receive.getType(),
+					receive.getHandler(),
+					receive.getReciver(),
+					receive.getTransportType()
+				};
+				db.executeUpdate(sql, ob_socket);
+
+				sql = "INSERT INTO matched_transport(sendid,transid,receiveid) VALUES(?,?,?) ON DUPLICATE KEY UPDATE transid = transid";
+				ob_socket = new Object[]{
+					send.getId(),
+					trans.getId(),
+					receive.getId()
+				};
+				db.executeUpdate(sql, ob_socket);
+			}
+			db.closeAll();
+
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	public ArrayList<MatchedTransport> readMatchedTransportFromDB(){
+		ArrayList<MatchedTransport> matchedTransports = new ArrayList<>();
+		DBUtil db = new DBUtil();
+		try{
+			db.getConnection();
+			String sql = "SELECT s.ID,s.TIME,s.ADDRESS,s.TYPE,s.HANDLER,s.RECIVER,s.TRANSPORTTYPE,"
+				+" t.ID,t.TIME,t.ADDRESS,t.TYPE,t.HANDLER,t.RECIVER,t.TRANSPORTTYPE,"
+				+" r.ID,r.TIME,r.ADDRESS,r.TYPE,r.HANDLER,r.RECIVER,r.TRANSPORTTYPE"
+				+" FROM matched_transport m,gather_transport s,gather_transport t,gather_transport r"
+				+" WHERE m.SENDID=s.ID AND m.TRANSID=t.ID AND m.RECEIVEID=r.ID;";
+			java.sql.ResultSet rs = db.executeQuery(sql,null);
+			while(rs.next()){
+				Transport send = new Transport (rs.getInt (1), rs.getDate(2),
+								rs.getString(3), rs.getInt(4) , rs.getString(5) ,
+								rs.getString(6), rs.getInt(7));
+
+				Transport trans = new Transport (rs.getInt (8), rs.getDate(9),
+								rs.getString(10), rs.getInt(11) , rs.getString(12) ,
+								rs.getString(13), rs.getInt(14));
+
+				Transport receive = new Transport (rs.getInt (15), rs.getDate(16),
+								rs.getString(17), rs.getInt(18) , rs.getString(19) ,
+								rs.getString(20), rs.getInt(21));
+				MatchedTransport matchedtrans = new MatchedTransport(send, trans, receive);
+				matchedTransports.add(matchedtrans);
+			}
+			db.closeAll();
+		}	
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		return matchedTransports;
+	}
+
 }

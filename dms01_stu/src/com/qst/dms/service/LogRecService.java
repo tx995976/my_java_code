@@ -17,7 +17,9 @@ import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
+import java.sql.Timestamp;
 
+import com.qst.dms.db.DBUtil;
 import com.qst.dms.entity.DataBase;
 import com.qst.dms.entity.LogRec;
 import com.qst.dms.entity.MatchedLogRec;
@@ -121,6 +123,71 @@ public class LogRecService {
         	}
 		return matchLogs;
     }
+	
+	public void SaveMacthLogToDB(ArrayList<MatchedLogRec> Logs){
+		DBUtil db = new DBUtil();
+		try{
+			db.getConnection();
+			for(MatchedLogRec log : Logs){
+				LogRec in = log.getLogin();
+				LogRec out = log.getLogout();
+				String sql = "INSERT INTO gather_logrec(id,time,address,type,username,ip,logtype) VALUES(?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE id = id";
 
-	public void
+				Object [] ob_socket = new Object[]{
+					in.getId(),
+					new Timestamp(in.getTime().getTime()),
+					in.getAddress(),
+					in.getType(),
+					in.getUser(),
+					in.getIp(),
+					in.getLogType()
+				};
+				db.executeUpdate(sql,ob_socket);
+				
+				ob_socket = new Object[]{
+					out.getId(),
+					new Timestamp(out.getTime().getTime()),
+					out.getAddress(),
+					out.getType(),
+					out.getUser(),
+					out.getIp(),
+					out.getLogType()
+				};
+				db.executeUpdate(sql,ob_socket);
+				
+				sql = "INSERT INTO matched_logrec(loginid,logoutid) VALUES(?,?) ON DUPLICATE KEY UPDATE loginid = loginid";
+				ob_socket = new Object[]{
+					in.getId(),
+					out.getId()
+				};
+				db.executeUpdate(sql, ob_socket);
+			}
+			db.closeAll();
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	public ArrayList<MatchedLogRec> readMatchedLogFromDB(){
+		ArrayList<MatchedLogRec> matchedlogs = new ArrayList<>();
+		DBUtil db = new DBUtil();
+		try{
+			db.getConnection();
+			String sql = "SELECT i.ID,i.TIME,i.ADDRESS,i.TYPE,i.USERNAME,i.IP,i.LOGTYPE,"
+						+" o.ID,o.TIME,o.ADDRESS,o.TYPE,o.USERNAME,o.IP,o.LOGTYPE"
+						+" FROM matched_logrec m,gather_logrec i,gather_logrec o"
+						+" WHERE m.loginid=i.id AND m.logoutid=o.id;";
+			java.sql.ResultSet rs = db.executeQuery(sql, null);
+			while(rs.next()){
+				LogRec in = new LogRec(rs.getInt(1),rs.getDate(2),rs.getString(3),rs.getInt(4),rs.getString(5),rs.getString(6),rs.getInt(7));
+				LogRec out = new LogRec(rs.getInt(8),rs.getDate(9),rs.getString(10),rs.getInt(11),rs.getString(12),rs.getString(13),rs.getInt(14));
+				matchedlogs.add(new MatchedLogRec(in,out));
+			}
+			db.closeAll();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return matchedlogs;
+	} 
 }

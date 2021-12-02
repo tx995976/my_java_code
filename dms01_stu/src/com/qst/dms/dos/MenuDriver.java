@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Scanner;
 
+import com.qst.dms.db.DBUtil;
 import com.qst.dms.entity.LogRec;
 import com.qst.dms.entity.MatchedLogRec;
 import com.qst.dms.entity.MatchedTransport;
@@ -35,6 +36,14 @@ public class MenuDriver {
 		ArrayList<MatchedTransport> matchedTrans = null;
 		ArrayList<MatchedTransport> matchedTrans_old = new ArrayList<>();
 
+		DBUtil db = new DBUtil();
+		try{
+			System.out.println("connecting....");
+			db.getConnection();
+			db.closeAll();
+		}catch(Exception e){
+			System.out.println("failed");
+		}
 
 		System.out.println("尝试读取文件....");
 		try{
@@ -120,32 +129,46 @@ public class MenuDriver {
 						/////////////////////
 						logService.SaveMacthLog(logs_buffer);
                         tranService.saveMatchedTransport(trans_buffer);
-					System.out.println("写入完成");
+					System.out.println("写入至文件完成");
+
+						logService.SaveMacthLogToDB(matchedLogs);
+						tranService.saveMatchTransportToDB(matchedTrans);
+
+					System.out.println("写入至数据库完成");
 					break;
 				case 4: {
-					System.out.println("显示匹配的数据：");
-						//输出匹配的日志信息
-						if(!matchedLogs_old.isEmpty())
+					System.out.println("显示至文件匹配的数据：");
+					//输出匹配的日志信息
+					if(!matchedLogs_old.isEmpty())
 						logService.showMatchLog(matchedLogs_old);
 						if(matchedLogs != null && !matchedLogs.isEmpty())
 						logService.showMatchLog(matchedLogs);
-
+						
 						if ((matchedLogs == null || matchedLogs.size() == 0) && (matchedLogs_old.isEmpty())){
 							System.out.println("匹配的物流记录是0条！");
 						} 
 						System.out.println("------------------------");
 						// 输出匹配的物流信息
 						if(!matchedTrans_old.isEmpty())
-							tranService.showMatchTransport(matchedTrans_old);
+						tranService.showMatchTransport(matchedTrans_old);
 						if(matchedTrans != null && !matchedTrans.isEmpty())
-                        	tranService.showMatchTransport(matchedTrans);
+						tranService.showMatchTransport(matchedTrans);
 						if ((matchedTrans == null || matchedTrans.size() == 0) && (matchedTrans_old.isEmpty())){
 							System.out.println("匹配的物流记录是0条！");
 						} 
+					System.out.println("显示至数据库匹配的数据：");
+					logService.showMatchLog(logService.readMatchedLogFromDB());
+					System.out.println("------------------------");
+					tranService.showMatchTransport(tranService.readMatchedTransportFromDB());
+						
 				}
 					break;
 				case 5:
 					System.out.println("数据发送 中...");
+					try{
+					}catch(Exception e){
+						e.printStackTrace();
+					}
 					break;
 				case 0:
 					// 应用程序退出

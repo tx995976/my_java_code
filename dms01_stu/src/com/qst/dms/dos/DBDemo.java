@@ -26,7 +26,7 @@ public class DBDemo {
 				new LogRec(1005, new Date(), "济南",DataBase.GATHER, "wangwu", "192.168.1.89", 1),
 				new LogRec(1006, new Date(), "济南", DataBase.GATHER,	"wangwu", "192.168.1.89", 0)));
 		//保存匹配的日志信息到数据库中
-		logService.saveMatchLogToDB(matchLogs);
+		logService.SaveMacthLogToDB(matchLogs);
 		//从数据库中读取匹配的日志信息
 		ArrayList<MatchedLogRec> logList = logService.readMatchedLogFromDB();
 		logService.showMatchLog(logList);
