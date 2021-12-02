@@ -219,4 +219,21 @@ public class TransportService {
 		return matchedTransports;
 	}
 
+	public ResultSet readTransResult() {		
+		DBUtil db = new DBUtil();
+		ResultSet rs=null;
+		try {
+			// 获取数据库链接
+			Connection conn=db.getConnection();
+			// // 查询匹配物流，设置ResultSet可以使用除了next()之外的方法操作结果集
+			Statement st=conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
+			
+			String sql = "SELECT * from gather_transport";
+			rs = st.executeQuery(sql);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return rs;
+	}
+
 }

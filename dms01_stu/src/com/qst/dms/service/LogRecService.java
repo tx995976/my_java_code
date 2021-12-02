@@ -1,23 +1,10 @@
 ﻿package com.qst.dms.service;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
-import java.sql.Timestamp;
+import java.sql.*;
 
 import com.qst.dms.db.DBUtil;
 import com.qst.dms.entity.DataBase;
@@ -190,4 +177,22 @@ public class LogRecService {
 		}
 		return matchedlogs;
 	} 
+
+	public ResultSet readLogResult() {		
+		DBUtil db = new DBUtil();
+		ResultSet rs=null;
+		try {
+			// 获取数据库链接
+			Connection conn=db.getConnection();
+			// 查询匹配日志，设置ResultSet可以使用除了next()之外的方法操作结果集
+			Statement st=conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
+			
+			String sql = "SELECT * from gather_logrec";
+			rs = st.executeQuery(sql);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return rs;
+	}
+
 }
