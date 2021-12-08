@@ -39,6 +39,7 @@ import com.qst.dms.gather.LogRecAnalyse;
 import com.qst.dms.gather.TransportAnalyse;
 import com.qst.dms.service.LogRecService;
 import com.qst.dms.service.TransportService;
+import javax.swing.SwingConstants;
 
 //主窗口
 public class MainFrame_temp extends JFrame {
@@ -127,7 +128,7 @@ public class MainFrame_temp extends JFrame {
 		// 设置窗体初始可见
 		this.setVisible(true);
 		// 设置窗体初始最大化
-		this.setSize(600, 400);
+		this.setSize(664, 461);
 		// 设置窗口初始化居中
 		this.setLocationRelativeTo(null);
 		// 设置默认的关闭按钮操作为退出程序
@@ -212,6 +213,7 @@ public class MainFrame_temp extends JFrame {
 	private void initToolBar() {
 		// 创建工具栏
 		toolBar = new JToolBar();
+		toolBar.setFloatable(false);
 		// 将工具栏添加到窗体北部（上面）
 		getContentPane().add(toolBar, BorderLayout.NORTH);
 

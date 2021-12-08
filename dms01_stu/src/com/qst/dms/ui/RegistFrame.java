@@ -21,6 +21,7 @@ import javax.swing.JTextField;
 
 import com.qst.dms.entity.User;
 import com.qst.dms.service.UserService;
+import javax.swing.DefaultComboBoxModel;
 
 //注册窗口
 public class RegistFrame extends JFrame {
@@ -89,7 +90,8 @@ public class RegistFrame extends JFrame {
 
 		// 组合框显示的学历数组
 		String str[] = { "小学", "初中", "高中", "本科", "硕士", "博士" };
-		cmbDegree = new JComboBox<String>(str);
+		cmbDegree = new JComboBox();
+		cmbDegree.setModel(new DefaultComboBoxModel(new String[] {"小学", "初中", "高中", "学士", "硕士"}));
 		// 设置组合框可编辑
 		cmbDegree.setEditable(true);
 		btnOk = new JButton("确定");
@@ -136,9 +138,9 @@ public class RegistFrame extends JFrame {
 		p8.add(btnCancle);
 		p.add(p8);
 		// 主面板放入窗体中
-		this.add(p);
+		getContentPane().add(p);
 		// 设置窗体大小和位置
-		this.setSize(310, 350);
+		this.setSize(380, 391);
 		this.setLocation(300, 300);
 		// 设置窗体不可改变大小
 		this.setResizable(false);
