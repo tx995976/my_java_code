@@ -124,7 +124,7 @@ public class Login extends JFrame {
 			if(user.getPassword().equals(pass)){
 				JOptionPane.showMessageDialog(null,"登录成功！","成功",JOptionPane.PLAIN_MESSAGE);
 				Login.this.setVisible(false);
-				new MainFrame_temp();
+				new MainFrame_temp();	
 			}
 			else{
 				JOptionPane.showMessageDialog(null,"密码错误","错误",JOptionPane.ERROR_MESSAGE);

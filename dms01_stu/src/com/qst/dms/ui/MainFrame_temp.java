@@ -40,6 +40,10 @@ import com.qst.dms.gather.TransportAnalyse;
 import com.qst.dms.service.LogRecService;
 import com.qst.dms.service.TransportService;
 import javax.swing.SwingConstants;
+import java.awt.Color;
+import java.awt.SystemColor;
+import javax.swing.UIManager;
+import javax.swing.DefaultComboBoxModel;
 
 //主窗口
 public class MainFrame_temp extends JFrame {
@@ -79,7 +83,8 @@ public class MainFrame_temp extends JFrame {
 	private LogRecService logRecService;
 	// 声明物流业务对象
 	private TransportService transportService;
-	private JButton btnNewButton;
+	private JComboBox Transtatus;
+	private JButton btnMatchTran;
 
 	// 构造方法
 	public MainFrame_temp() {
@@ -172,7 +177,7 @@ public class MainFrame_temp extends JFrame {
 		miExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// 显示确认对话框，当选择YES_OPTION时退出系统
-				if (JOptionPane.showConfirmDialog(null, "您确定要退出系统吗？", "退出系统",
+				if (JOptionPane.showConfirmDialog(null, "您确定要退出系统吗？未保存的数据将丢失", "退出系统",
 						JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 					// 退出系统
 					System.exit(0);
@@ -202,7 +207,7 @@ public class MainFrame_temp extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				// 显示消息对话框
 				JOptionPane.showMessageDialog(null,
-						"开发人：", "自行补充",
+						"开发人: tx995976", "关于",
 						JOptionPane.WARNING_MESSAGE);
 			}
 		});
@@ -219,32 +224,35 @@ public class MainFrame_temp extends JFrame {
 
 		// 添加带有图标的工具栏按钮--->采集数据
 		ImageIcon gatherIcon = new ImageIcon("images\\gatherData.png");
-		btnGather = new JButton("采集数据", gatherIcon);
+		btnGather = new JButton("采集数据", null);
+		btnGather.setForeground(SystemColor.desktop);
+		btnGather.setBackground(UIManager.getColor("Button.background"));
 		// 注册监听
 		btnGather.addActionListener(new GatherListener());
 		toolBar.add(btnGather);
 		
 		// 添加带有图标的工具栏按钮--->匹配日志数据
 		ImageIcon matchIcon = new ImageIcon("images\\matchData.png");
-		btnMatchLog = new JButton("匹配日志数据", matchIcon);
+		btnMatchLog = new JButton("匹配日志数据", null);
 		// 注册监听
 		btnMatchLog.addActionListener(new MatchLogListener());
 		toolBar.add(btnMatchLog);
 
+		btnMatchTran = new JButton("匹配物流数据");
+		btnMatchTran.addActionListener(new MatchTransListener());
+		toolBar.add(btnMatchTran);
+
 		//需要补充添加带有图标的工具栏按钮--->匹配日志数据 ，并注册监听
-		/*...
-		 * 
-		 */
-		// 添加带有图标的工具栏按钮--->保存数据
 		ImageIcon saveIcon = new ImageIcon("images\\saveData.png");
-		btnSave = new JButton("保存数据", saveIcon);
+		btnSave = new JButton("保存数据", null);
 		// 注册监听
 		btnSave.addActionListener(new SaveDataListener());
 		toolBar.add(btnSave);
+		
 
 		// 添加带有图标的工具栏按钮--->发送数据
 		ImageIcon sendIcon = new ImageIcon("images\\sendData.png");
-		btnSend = new JButton("发送数据", sendIcon);
+		btnSend = new JButton("发送数据", null);
 		btnSend.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
@@ -253,7 +261,7 @@ public class MainFrame_temp extends JFrame {
 		
 		// 添加带有图标的工具栏按钮--->显示数据
 		ImageIcon showIcon = new ImageIcon("images\\showData.png");
-		btnShow = new JButton("显示数据", showIcon);
+		btnShow = new JButton("显示数据", null);
 		btnShow.addActionListener(new ShowDataListener());
 		toolBar.add(btnShow);
 	}
@@ -272,6 +280,8 @@ public class MainFrame_temp extends JFrame {
 			pLogId.add(lblLogId);
 
 			txtLogId = new JTextField();
+			txtLogId.setBackground(new Color(0, 0, 0));
+			txtLogId.setEnabled(false);
 			txtLogId.setPreferredSize(new Dimension(100, 20));
 			pLogId.add(txtLogId);
 
@@ -303,8 +313,19 @@ public class MainFrame_temp extends JFrame {
 			pIP.add(lblIP);
 
 			txtIP = new JTextField();
+			txtIP.setBackground(Color.WHITE);
+			txtIP.setForeground(new Color(0, 0, 0));
+			txtIP.setEnabled(false);
 			txtIP.setPreferredSize(new Dimension(100, 20));
 			pIP.add(txtIP);
+			try{
+				java.net.InetAddress getip;
+				getip = java.net.InetAddress.getLocalHost();
+				String ip = getip.getHostAddress();
+				txtIP.setText(ip);
+			}catch(Exception e){
+				e.printStackTrace();
+			};
 
 			pLogStatus = new JPanel();
 			pLog.add(pLogStatus);
@@ -329,9 +350,6 @@ public class MainFrame_temp extends JFrame {
 			btnLogConfirm = new JButton("确认");
 			// 添加确认按钮监听
 			btnLogConfirm.addActionListener(new GatherLogListener());
-			
-			btnNewButton = new JButton("New button");
-			pLogButton.add(btnNewButton);
 			pLogButton.add(btnLogConfirm);
 
 			btnLogReset = new JButton("重置");
@@ -353,6 +371,8 @@ public class MainFrame_temp extends JFrame {
 		pTransId.add(lblTransId);
 
 		txtTransId = new JTextField();
+		txtTransId.setBackground(new Color(0, 0, 0));
+		txtTransId.setEnabled(false);
 		txtTransId.setPreferredSize(new Dimension(100, 20));
 		pTransId.add(txtTransId);
 
@@ -391,6 +411,10 @@ public class MainFrame_temp extends JFrame {
 
 		lblTranStatus = new JLabel("物流状态：");
 		pTranStatus.add(lblTranStatus);
+		
+		Transtatus = new JComboBox();
+		Transtatus.setModel(new DefaultComboBoxModel(new String[] {"发货中", "送货中", "已签收"}));
+		pTranStatus.add(Transtatus);
 
 		String[] tranStatus = new String[] { "发货中", "送货中", "已签收" };
 
@@ -419,7 +443,7 @@ public class MainFrame_temp extends JFrame {
 		// 数据采集的事件处理方法
 		public void actionPerformed(ActionEvent e) {
 			// 获取日志ID
-			int id = Integer.parseInt(txtLogId.getText().trim());
+			int id = 1;
 			// 创建当前时间
 			Date time = new Date();
 			// 获取地址栏地址
@@ -447,7 +471,7 @@ public class MainFrame_temp extends JFrame {
 		// 数据采集的事件处理方法
 		public void actionPerformed(ActionEvent e) {
 			// 获取物流ID
-			int id = Integer.parseInt(txtTransId.getText().trim());
+			int id = 1;
 			// 创建当前时间
 			Date time = new Date();
 			// 获取地址栏地址
@@ -503,11 +527,11 @@ public class MainFrame_temp extends JFrame {
 	private class MatchTransListener implements ActionListener {
 		// 数据匹配的事件处理方法
 		public void actionPerformed(ActionEvent e) {
-			
-			//需要补充物流数据匹配的事件处理方法
-			/*...
-			 * 
-			 */
+			TransportAnalyse TranAn = new TransportAnalyse(transList);
+			TranAn.doFilter();
+			matchedTrans = TranAn.matchData();
+			JOptionPane.showMessageDialog(null, "日志数据过滤、分析匹配完成！", "提示",
+					JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
 
@@ -515,12 +539,29 @@ public class MainFrame_temp extends JFrame {
 	private class SaveDataListener implements ActionListener {
 		// 数据保存的事件处理方法
 		public void actionPerformed(ActionEvent e) {
-			
+			try{
+				logRecService.SaveMacthLogToDB(matchedLogs);
+				matchedLogs = logRecService.readMatchedLogFromDB();
+				logRecService.SaveMacthLog(matchedLogs);
+
+			}catch(Exception a){
+				JOptionPane.showMessageDialog(null, "日志信息存储失败", "警告",
+					JOptionPane.ERROR_MESSAGE);
+			}
 			
 			// 保存匹配的物流信息
 			//若保存成功，弹出提示框：匹配的日志数据以保存到文件和数据库中！",
 			//若没有保存成功，则弹出相应的告警提示框
 						
+			try{
+				transportService.saveMatchTransportToDB(matchedTrans);
+				matchedTrans = transportService.readMatchedTransportFromDB();
+				transportService.saveMatchedTransport(matchedTrans);
+			}catch(Exception a){
+				JOptionPane.showMessageDialog(null, "物流信息存储失败", "警告",
+					JOptionPane.ERROR_MESSAGE);
+			}
+
 			// 保存匹配的物流信息
 			//若保存成功，弹出提示框：匹配的物流数据以保存到文件和数据库中！",
 			//若没有保存成功，则弹出相应的告警提示框
@@ -560,6 +601,12 @@ public class MainFrame_temp extends JFrame {
 	//需要补充显示物流信息表格
 	private void flushMatchedTransTable() {
 		//显示物流数据表格
+		MatchedTableModel TranModel = new MatchedTableModel(
+			transportService.readTransResult(),2);
+		JTable TranTable = new JTable(TranModel);
+		scrollPane = new JScrollPane(TranTable);
+		showPane.addTab("物流", scrollPane);
+		
 	}
 
 	public static void main(String[] args) {
