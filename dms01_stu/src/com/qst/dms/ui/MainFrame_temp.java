@@ -6,6 +6,9 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -39,6 +42,8 @@ import com.qst.dms.gather.LogRecAnalyse;
 import com.qst.dms.gather.TransportAnalyse;
 import com.qst.dms.service.LogRecService;
 import com.qst.dms.service.TransportService;
+import com.qst.dms.util.Config;
+
 import javax.swing.SwingConstants;
 import java.awt.Color;
 import java.awt.SystemColor;
@@ -85,6 +90,7 @@ public class MainFrame_temp extends JFrame {
 	private TransportService transportService;
 	private JComboBox Transtatus;
 	private JButton btnMatchTran;
+	private String serverIp;
 
 	// 构造方法
 	public MainFrame_temp() {
@@ -138,6 +144,9 @@ public class MainFrame_temp extends JFrame {
 		this.setLocationRelativeTo(null);
 		// 设置默认的关闭按钮操作为退出程序
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		///////other
+
+		serverIp = Config.getValue("serverIP");
 	}
 
 	// 初始化菜单的方法
@@ -572,8 +581,6 @@ public class MainFrame_temp extends JFrame {
 		}
 	}
 
-
-	
 	//数据显示监听类
 	private class ShowDataListener implements ActionListener {
 		// 数据显示的事件处理方法
@@ -586,6 +593,52 @@ public class MainFrame_temp extends JFrame {
 			flushMatchedLogTable();
 			// 刷新物流信息表
 			flushMatchedTransTable();
+			new UpdateTableThread().start();
+		}
+	}
+
+	//数据发送类
+	private class SendDataListener implements ActionListener{
+		public void actionPerformed(ActionEvent e){
+			try{
+				if(matchedLogs != null && matchedLogs.size() > 0){
+					Socket logSocket = new Socket(serverIp,9959);
+					ObjectOutputStream logOutStream = new ObjectOutputStream(logSocket.getOutputStream());
+					logOutStream.writeObject(matchedLogs);
+					logOutStream.flush();
+					logOutStream.close();
+					matchedLogs.clear();
+					logList.clear();
+					JOptionPane.showMessageDialog(null, "日志数据发送完成", "提示",
+					JOptionPane.INFORMATION_MESSAGE);
+				}
+				else{
+					JOptionPane.showMessageDialog(null, "无合适数据发送", "提示",
+					JOptionPane.INFORMATION_MESSAGE);
+				}
+			}catch(Exception a){
+				a.printStackTrace();
+			}
+
+			try{
+				if(matchedTrans != null && matchedTrans.size() > 0){
+					Socket logSocket = new Socket(serverIp,9959);
+					ObjectOutputStream logOutStream = new ObjectOutputStream(logSocket.getOutputStream());
+					logOutStream.writeObject(matchedTrans);
+					logOutStream.flush();
+					logOutStream.close();
+					matchedTrans.clear();
+					transList.clear();
+					JOptionPane.showMessageDialog(null, "物流数据发送完成", "提示",
+					JOptionPane.INFORMATION_MESSAGE);
+				}
+				else{
+					JOptionPane.showMessageDialog(null, "无合适数据发送", "提示",
+					JOptionPane.INFORMATION_MESSAGE);
+				}
+			}catch(Exception a){
+				a.printStackTrace();
+			}
 		}
 	}
 
@@ -611,6 +664,21 @@ public class MainFrame_temp extends JFrame {
 		scrollPane = new JScrollPane(TranTable);
 		showPane.addTab("物流", scrollPane);
 		
+	}
+
+	private class UpdateTableThread extends Thread{
+		public void run() {
+			while(true){
+				showPane.removeAll();
+				flushMatchedLogTable();
+				flushMatchedTransTable();
+				try{
+					Thread.sleep(1*3*1000);
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	public static void main(String[] args) {
