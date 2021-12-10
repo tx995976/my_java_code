@@ -1,7 +1,5 @@
 package com.qst.dms.service;
-
 import java.sql.ResultSet;
-
 import org.mariadb.jdbc.*;
 import com.qst.dms.db.DBUtil;
 import com.qst.dms.entity.User;
@@ -46,8 +44,8 @@ public class UserService {
 			// 获取数据库连接
 			db.getConnection();
 			//start revised by yyc 20191012
-//			String sqltest = "SELECT * FROM userdetails WHERE username=user";
-//			ResultSet rs = statement.executeQuery(sqltest);
+			//String sqltest = "SELECT * FROM userdetails WHERE username=user";
+			//ResultSet rs = statement.executeQuery(sqltest);
 			
 			//start revised by yyc 20191126
 			String sqltest = "SELECT * FROM userdetails WHERE username='"+user.getUsername()+"'";

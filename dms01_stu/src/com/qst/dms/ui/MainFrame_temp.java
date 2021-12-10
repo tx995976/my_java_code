@@ -540,9 +540,10 @@ public class MainFrame_temp extends JFrame {
 		// 数据保存的事件处理方法
 		public void actionPerformed(ActionEvent e) {
 			try{
-				logRecService.SaveMacthLogToDB(matchedLogs);
+				logRecService.SaveMacthLogToDB_nonid(matchedLogs);
 				matchedLogs = logRecService.readMatchedLogFromDB();
 				logRecService.SaveMacthLog(matchedLogs);
+				matchedLogs.clear();
 
 			}catch(Exception a){
 				JOptionPane.showMessageDialog(null, "日志信息存储失败", "警告",
@@ -554,14 +555,17 @@ public class MainFrame_temp extends JFrame {
 			//若没有保存成功，则弹出相应的告警提示框
 						
 			try{
-				transportService.saveMatchTransportToDB(matchedTrans);
+				transportService.saveMatchTransportToDB_nonid(matchedTrans);
 				matchedTrans = transportService.readMatchedTransportFromDB();
 				transportService.saveMatchedTransport(matchedTrans);
+				matchedTrans.clear();
 			}catch(Exception a){
 				JOptionPane.showMessageDialog(null, "物流信息存储失败", "警告",
 					JOptionPane.ERROR_MESSAGE);
 			}
 
+			JOptionPane.showMessageDialog(null, "保存成功", "提示",
+					JOptionPane.INFORMATION_MESSAGE);
 			// 保存匹配的物流信息
 			//若保存成功，弹出提示框：匹配的物流数据以保存到文件和数据库中！",
 			//若没有保存成功，则弹出相应的告警提示框

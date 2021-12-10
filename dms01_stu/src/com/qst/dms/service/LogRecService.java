@@ -156,6 +156,49 @@ public class LogRecService {
 		}
 	}
 
+	public void SaveMacthLogToDB_nonid(ArrayList<MatchedLogRec> Logs){
+		DBUtil db = new DBUtil();
+		try{
+			db.getConnection();
+			for(MatchedLogRec log : Logs){
+				LogRec in = log.getLogin();
+				LogRec out = log.getLogout();
+				String sql = "INSERT INTO gather_logrec(time,address,type,username,ip,logtype) VALUES(?,?,?,?,?,?) ON DUPLICATE KEY UPDATE time = time";
+
+				Object [] ob_socket = new Object[]{
+					new Timestamp(in.getTime().getTime()),
+					in.getAddress(),
+					in.getType(),
+					in.getUser(),
+					in.getIp(),
+					in.getLogType()
+				};
+				in.setId(db.executeSQLAndReturnPrimaryKey(sql, ob_socket));
+				
+				ob_socket = new Object[]{
+					new Timestamp(out.getTime().getTime()),
+					out.getAddress(),
+					out.getType(),
+					out.getUser(),
+					out.getIp(),
+					out.getLogType()
+				};
+				out.setId(db.executeSQLAndReturnPrimaryKey(sql, ob_socket));
+				
+				sql = "INSERT INTO matched_logrec(loginid,logoutid) VALUES(?,?) ON DUPLICATE KEY UPDATE loginid = loginid";
+				ob_socket = new Object[]{
+					in.getId(),
+					out.getId()
+				};
+				db.executeUpdate(sql, ob_socket);
+			}
+			db.closeAll();
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
 	public ArrayList<MatchedLogRec> readMatchedLogFromDB(){
 		ArrayList<MatchedLogRec> matchedlogs = new ArrayList<>();
 		DBUtil db = new DBUtil();

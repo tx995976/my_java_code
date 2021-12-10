@@ -185,6 +185,61 @@ public class TransportService {
 		}
 	}
 
+	public void saveMatchTransportToDB_nonid(ArrayList<MatchedTransport> matchTrans){
+		DBUtil db = new DBUtil();
+		try{
+			db.getConnection();
+			for(MatchedTransport match : matchTrans){
+				Transport send = match.getSend();
+				Transport trans = match.getTrans();
+				Transport receive = match.getReceive();
+				// INSERT ?
+				String sql = "INSERT INTO gather_transport(time,address,type,handler,reciver,transporttype) VALUES(?,?,?,?,?,?) ON DUPLICATE KEY UPDATE id = id";
+				Object [] ob_socket = new Object [] {
+					new java.sql.Timestamp(send.getTime().getTime()),
+					send.getAddress(),
+					send.getType(),
+					send.getHandler(),
+					send.getReciver(),
+					send.getTransportType()
+				};
+				send.setId(db.executeSQLAndReturnPrimaryKey(sql, ob_socket));
+
+				ob_socket = new Object []{
+					new java.sql.Timestamp(trans.getTime().getTime()),
+					trans.getAddress(),
+					trans.getType(),
+					trans.getHandler(),
+					trans.getReciver(),
+					trans.getTransportType()
+				};
+				trans.setId(db.executeSQLAndReturnPrimaryKey(sql, ob_socket));
+
+				ob_socket = new Object[]{
+					new java.sql.Timestamp(receive.getTime().getTime()),
+					receive.getAddress(),
+					receive.getType(),
+					receive.getHandler(),
+					receive.getReciver(),
+					receive.getTransportType()
+				};
+				receive.setId(db.executeSQLAndReturnPrimaryKey(sql, ob_socket));
+
+				sql = "INSERT INTO matched_transport(sendid,transid,receiveid) VALUES(?,?,?) ON DUPLICATE KEY UPDATE transid = transid";
+				ob_socket = new Object[]{
+					send.getId(),
+					trans.getId(),
+					receive.getId()
+				};
+				db.executeUpdate(sql, ob_socket);
+			}
+			db.closeAll();
+
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
 	public ArrayList<MatchedTransport> readMatchedTransportFromDB(){
 		ArrayList<MatchedTransport> matchedTransports = new ArrayList<>();
 		DBUtil db = new DBUtil();
